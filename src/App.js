@@ -1,4 +1,3 @@
-// App.js
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useCSVData } from './hooks/useCSVData';
@@ -36,8 +35,8 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>의약품 데이터 뷰어</h1>
+    <div className="min-h-screen bg-gray-100 p-6">
+      <h1 className="text-4xl font-bold mb-5 text-center text-gray-900">의약품 데이터 뷰어</h1>
       <SearchBar
         searchTerms={searchTerms}
         setSearchTerms={setSearchTerms}
@@ -56,10 +55,10 @@ function App() {
         onRequestClose={toggleModal}
         contentLabel="Additional Information Modal"
       >
-        <h2>표시할 열 선택</h2>
-        <div>
+        <h2 className="text-lg font-medium mb-4">표시할 열 선택</h2>
+        <div className="space-y-2">
           {columns.map(column => (
-            <div key={column.name}>
+            <div key={column.name} className="flex items-center">
               <input
                 type="checkbox"
                 id={column.name}
@@ -71,12 +70,13 @@ function App() {
                     setVisibleColumns([...visibleColumns, column.name]);
                   }
                 }}
+                className="mr-2"
               />
               <label htmlFor={column.name}>{column.name}</label>
             </div>
           ))}
         </div>
-        <button onClick={toggleModal}>닫기</button>
+        <button onClick={toggleModal} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">닫기</button>
       </Modal>
       <Modal
         isOpen={showAnalysis}

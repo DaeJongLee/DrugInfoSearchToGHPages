@@ -6,9 +6,11 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "autoprefixer": "^10.4.19",
     "fuse.js": "^7.0.0",
     "lodash": "^4.17.21",
     "papaparse": "^5.4.1",
+    "postcss": "^8.4.39",
     "react": "^18.3.1",
     "react-data-table-component": "^7.6.2",
     "react-dom": "^18.3.1",
@@ -16,6 +18,7 @@
     "react-scripts": "5.0.1",
     "recharts": "^2.12.7",
     "styled-components": "^6.1.12",
+    "tailwindcss": "^3.4.6",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
