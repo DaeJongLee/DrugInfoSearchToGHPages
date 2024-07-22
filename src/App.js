@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { useCSVData } from './hooks/useCSVData';
 import { useDataFilter } from './hooks/useDataFilter';
@@ -18,8 +18,15 @@ function App() {
   const [showProductList, setShowProductList] = useState(false);
   const [selectedIngredient, setSelectedIngredient] = useState('');
   const [selectedIngredients, setSelectedIngredients] = useState(null);
+  const [browserWidth, setBrowserWidth] = useState(window.innerWidth);
 
   const { filteredData, searchTerms, setSearchTerms, excludeTerms, setExcludeTerms } = useDataFilter(data, columns);
+
+  useEffect(() => {
+    const handleResize = () => setBrowserWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleModal = () => setModalIsOpen(!modalIsOpen);
   const toggleAnalysis = () => setShowAnalysis(!showAnalysis);
@@ -34,6 +41,42 @@ function App() {
     setShowProductList(true);
   };
 
+  const adjustedColumns = columns.map(column => {
+    if (visibleColumns.includes(column.name)) {
+      let width;
+      switch (column.name) {
+        case '업체명':
+          width = browserWidth * 0.15;
+          break;
+        case '제품명':
+          width = browserWidth * 0.2;
+          break;
+        case '주성분':
+          width = browserWidth * 0.25;
+          break;
+        case '주성분영문':
+          width = browserWidth * 0.25;
+          break;
+        case '첨가제':
+          width = browserWidth * 0.15;
+          break;
+        default:
+          width = browserWidth * 0.1;
+      }
+      return {
+        ...column,
+        width: `${width}px`,
+        wrap: true,
+        style: {
+          whiteSpace: 'normal',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis'
+        }
+      };
+    }
+    return column;
+  });
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-4xl font-bold mb-5 text-center text-gray-900">의약품 데이터 뷰어</h1>
@@ -47,8 +90,8 @@ function App() {
         onResetSearch={resetSearch}
       />
       <DataTable
-        columns={columns.filter(col => visibleColumns.includes(col.name))}
-        data={filteredData}
+        columns={adjustedColumns.filter(col => visibleColumns.includes(col.name))}
+        data={filteredData.length > 0 ? filteredData : data}
       />
       <Modal
         isOpen={modalIsOpen}
