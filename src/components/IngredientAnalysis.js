@@ -1,4 +1,3 @@
-// components/IngredientAnalysis.js
 import React, { useState, useMemo } from 'react';
 import DataTable from 'react-data-table-component';
 import Modal from 'react-modal';
@@ -39,6 +38,7 @@ function IngredientAnalysis({ data, onClose }) {
       .sort((a, b) => b.count - a.count);
   }, [data]);
 
+
   const filteredIngredients = ingredientDistribution.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -61,10 +61,13 @@ function IngredientAnalysis({ data, onClose }) {
     {
       name: '제품 목록',
       cell: row => (
-        <button onClick={() => {
-          setSelectedIngredient(row);
-          setShowProductList(true);
-        }}>
+        <button
+          onClick={() => {
+            setSelectedIngredient(row);
+            setShowProductList(true);
+          }}
+          className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        >
           제품 목록 보기
         </button>
       ),
@@ -78,16 +81,16 @@ function IngredientAnalysis({ data, onClose }) {
   ];
 
   return (
-    <div style={{ padding: '20px', maxHeight: '80vh', overflowY: 'auto' }}>
-      <h2>성분 분석</h2>
+    <div className="p-6 max-h-[80vh] overflow-y-auto">
+      <h2 className="text-2xl font-bold mb-4">성분 분석</h2>
       <input
         type="text"
         placeholder="검색..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        style={{ marginBottom: '20px', width: '100%', padding: '10px' }}
+        className="w-full p-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
-      <h3>개별 성분 분포</h3>
+      <h3 className="text-xl font-semibold mb-2">개별 성분 분포</h3>
       <DataTable
         columns={columns}
         data={filteredIngredients}
@@ -95,7 +98,7 @@ function IngredientAnalysis({ data, onClose }) {
         paginationPerPage={10}
         paginationRowsPerPageOptions={[10, 20, 30]}
       />
-      <h3>성분 조합</h3>
+      <h3 className="text-xl font-semibold my-4">성분 조합</h3>
       <DataTable
         columns={columns}
         data={filteredCombinations}
@@ -103,21 +106,23 @@ function IngredientAnalysis({ data, onClose }) {
         paginationPerPage={10}
         paginationRowsPerPageOptions={[10, 20, 30]}
       />
-      <button onClick={onClose} style={{ marginTop: '20px' }}>닫기</button>
+      <button
+        onClick={onClose}
+        className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+      >
+        닫기
+      </button>
 
       <Modal
         isOpen={showProductList}
         onRequestClose={() => setShowProductList(false)}
         contentLabel="Product List Modal"
-        style={{
-          content: {
-            width: '80%',
-            height: '80%',
-            margin: 'auto'
-          }
-        }}
+        className="w-4/5 h-4/5 mx-auto mt-20 bg-white rounded-lg p-6 outline-none"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
       >
-        <h2>{selectedIngredient?.name} 포함 제품 목록 (총 {selectedIngredient?.count}개)</h2>
+        <h2 className="text-2xl font-bold mb-4">
+          {selectedIngredient?.name} 포함 제품 목록 (총 {selectedIngredient?.count}개)
+        </h2>
         <DataTable
           columns={productListColumns}
           data={selectedIngredient?.products || []}
@@ -125,7 +130,12 @@ function IngredientAnalysis({ data, onClose }) {
           paginationPerPage={10}
           paginationRowsPerPageOptions={[10, 20, 30]}
         />
-        <button onClick={() => setShowProductList(false)} style={{ marginTop: '20px' }}>닫기</button>
+        <button
+          onClick={() => setShowProductList(false)}
+          className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+        >
+          닫기
+        </button>
       </Modal>
     </div>
   );
