@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/DrugInfoSearchToGHPages/static/css/main.de0ec557.css",
+    "main.js": "/DrugInfoSearchToGHPages/static/js/main.c0a8c904.js",
+    "static/js/453.3c5e612f.chunk.js": "/DrugInfoSearchToGHPages/static/js/453.3c5e612f.chunk.js",
+    "index.html": "/DrugInfoSearchToGHPages/index.html",
+    "main.de0ec557.css.map": "/DrugInfoSearchToGHPages/static/css/main.de0ec557.css.map",
+    "main.c0a8c904.js.map": "/DrugInfoSearchToGHPages/static/js/main.c0a8c904.js.map",
+    "453.3c5e612f.chunk.js.map": "/DrugInfoSearchToGHPages/static/js/453.3c5e612f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.de0ec557.css",
+    "static/js/main.c0a8c904.js"
+  ]
+}
