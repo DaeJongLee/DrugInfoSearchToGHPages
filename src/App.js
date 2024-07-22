@@ -6,6 +6,7 @@ import { useDataFilter } from './hooks/useDataFilter';
 import DataTable from './components/DataTable';
 import IngredientAnalysis from './components/IngredientAnalysis';
 import SearchBar from './components/SearchBar';
+import ProductList from './components/ProductList';
 import './App.css';
 
 Modal.setAppElement('#root');
@@ -15,6 +16,9 @@ function App() {
   const [visibleColumns, setVisibleColumns] = useState(['업체명', '제품명', '주성분', '주성분영문', '첨가제']);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showProductList, setShowProductList] = useState(false);
+  const [selectedIngredient, setSelectedIngredient] = useState('');
+  const [selectedIngredients, setSelectedIngredients] = useState(null);
 
   const { filteredData, searchTerms, setSearchTerms, excludeTerms, setExcludeTerms } = useDataFilter(data, columns);
 
@@ -24,7 +28,12 @@ function App() {
     setSearchTerms([{ value: '', type: 'AND' }]);
     setExcludeTerms([{ value: '' }]);
   };
-  
+
+  const openProductList = (ingredient, ingredients) => {
+    setSelectedIngredient(ingredient);
+    setSelectedIngredients(ingredients);
+    setShowProductList(true);
+  };
 
   return (
     <div className="App">
@@ -38,7 +47,7 @@ function App() {
         onShowAnalysis={toggleAnalysis}
         onResetSearch={resetSearch}
       />
-      <DataTable 
+      <DataTable
         columns={columns.filter(col => visibleColumns.includes(col.name))}
         data={filteredData}
       />
@@ -81,7 +90,26 @@ function App() {
           }
         }}
       >
-        <IngredientAnalysis data={data} onClose={toggleAnalysis} />
+        <IngredientAnalysis data={data} onClose={toggleAnalysis} onShowProducts={openProductList} />
+      </Modal>
+      <Modal
+        isOpen={showProductList}
+        onRequestClose={() => setShowProductList(false)}
+        contentLabel="Product List Modal"
+        style={{
+          content: {
+            width: '80%',
+            height: '80%',
+            margin: 'auto'
+          }
+        }}
+      >
+        <ProductList
+          data={data}
+          ingredient={selectedIngredient}
+          ingredients={selectedIngredients}
+          onClose={() => setShowProductList(false)}
+        />
       </Modal>
     </div>
   );

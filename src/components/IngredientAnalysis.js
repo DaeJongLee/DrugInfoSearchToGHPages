@@ -1,19 +1,25 @@
+// components/IngredientAnalysis.js
 import React, { useState, useMemo } from 'react';
 import DataTable from 'react-data-table-component';
+import Modal from 'react-modal';
 
 function IngredientAnalysis({ data, onClose }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [showProductList, setShowProductList] = useState(false);
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
 
   const ingredientDistribution = useMemo(() => {
     const distribution = {};
     data.forEach(item => {
       const ingredients = item.주성분.split('/').map(i => i.trim());
       ingredients.forEach(ingredient => {
-        distribution[ingredient] = (distribution[ingredient] || 0) + 1;
+        distribution[ingredient] = distribution[ingredient] || { count: 0, products: [] };
+        distribution[ingredient].count += 1;
+        distribution[ingredient].products.push(item);
       });
     });
     return Object.entries(distribution)
-      .map(([name, count]) => ({ name, count }))
+      .map(([name, { count, products }]) => ({ name, count, products }))
       .sort((a, b) => b.count - a.count);
   }, [data]);
 
@@ -23,11 +29,13 @@ function IngredientAnalysis({ data, onClose }) {
       const ingredients = item.주성분.split('/').map(i => i.trim());
       if (ingredients.length > 1) {
         const combo = ingredients.sort().join(' + ');
-        combinations[combo] = (combinations[combo] || 0) + 1;
+        combinations[combo] = combinations[combo] || { count: 0, products: [] };
+        combinations[combo].count += 1;
+        combinations[combo].products.push(item);
       }
     });
     return Object.entries(combinations)
-      .map(([name, count]) => ({ name, count }))
+      .map(([name, { count, products }]) => ({ name, count, products }))
       .sort((a, b) => b.count - a.count);
   }, [data]);
 
@@ -50,6 +58,23 @@ function IngredientAnalysis({ data, onClose }) {
       selector: row => row.count,
       sortable: true,
     },
+    {
+      name: '제품 목록',
+      cell: row => (
+        <button onClick={() => {
+          setSelectedIngredient(row);
+          setShowProductList(true);
+        }}>
+          제품 목록 보기
+        </button>
+      ),
+    },
+  ];
+
+  const productListColumns = [
+    { name: '업체명', selector: row => row.업체명, sortable: true },
+    { name: '제품명', selector: row => row.제품명, sortable: true },
+    { name: '주성분', selector: row => row.주성분, sortable: true },
   ];
 
   return (
@@ -79,6 +104,29 @@ function IngredientAnalysis({ data, onClose }) {
         paginationRowsPerPageOptions={[10, 20, 30]}
       />
       <button onClick={onClose} style={{ marginTop: '20px' }}>닫기</button>
+
+      <Modal
+        isOpen={showProductList}
+        onRequestClose={() => setShowProductList(false)}
+        contentLabel="Product List Modal"
+        style={{
+          content: {
+            width: '80%',
+            height: '80%',
+            margin: 'auto'
+          }
+        }}
+      >
+        <h2>{selectedIngredient?.name} 포함 제품 목록 (총 {selectedIngredient?.count}개)</h2>
+        <DataTable
+          columns={productListColumns}
+          data={selectedIngredient?.products || []}
+          pagination
+          paginationPerPage={10}
+          paginationRowsPerPageOptions={[10, 20, 30]}
+        />
+        <button onClick={() => setShowProductList(false)} style={{ marginTop: '20px' }}>닫기</button>
+      </Modal>
     </div>
   );
 }
