@@ -8,14 +8,20 @@ function IngredientAnalysis({ data, onClose }) {
   const [selectedIngredient, setSelectedIngredient] = useState(null);
 
   const ingredientDistribution = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    
     const distribution = {};
     data.forEach(item => {
-      const ingredients = item.주성분.split('/').map(i => i.trim());
-      ingredients.forEach(ingredient => {
-        distribution[ingredient] = distribution[ingredient] || { count: 0, products: [] };
-        distribution[ingredient].count += 1;
-        distribution[ingredient].products.push(item);
-      });
+      if (item && item.주성분) {
+        const ingredients = item.주성분.split('/').map(i => i.trim());
+        ingredients.forEach(ingredient => {
+          if (ingredient) {
+            distribution[ingredient] = distribution[ingredient] || { count: 0, products: [] };
+            distribution[ingredient].count += 1;
+            distribution[ingredient].products.push(item);
+          }
+        });
+      }
     });
     return Object.entries(distribution)
       .map(([name, { count, products }]) => ({ name, count, products }))
@@ -23,21 +29,24 @@ function IngredientAnalysis({ data, onClose }) {
   }, [data]);
 
   const ingredientCombinations = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    
     const combinations = {};
     data.forEach(item => {
-      const ingredients = item.주성분.split('/').map(i => i.trim());
-      if (ingredients.length > 1) {
-        const combo = ingredients.sort().join(' + ');
-        combinations[combo] = combinations[combo] || { count: 0, products: [] };
-        combinations[combo].count += 1;
-        combinations[combo].products.push(item);
+      if (item && item.주성분) {
+        const ingredients = item.주성분.split('/').map(i => i.trim());
+        if (ingredients.length > 1) {
+          const combo = ingredients.sort().join(' + ');
+          combinations[combo] = combinations[combo] || { count: 0, products: [] };
+          combinations[combo].count += 1;
+          combinations[combo].products.push(item);
+        }
       }
     });
     return Object.entries(combinations)
       .map(([name, { count, products }]) => ({ name, count, products }))
       .sort((a, b) => b.count - a.count);
   }, [data]);
-
 
   const filteredIngredients = ingredientDistribution.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
